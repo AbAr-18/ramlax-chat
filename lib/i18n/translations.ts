@@ -1,0 +1,129 @@
+import type { Language } from "@/lib/types/chat.types";
+
+export const translations = {
+  ar: {
+    brandName: "رملة",
+    brandTagline: "مساعدة رمال الذكية",
+    bubbleAria: "افتح محادثة رملة",
+    closeAria: "إغلاق المحادثة",
+    newConversation: "محادثة جديدة",
+    langToggle: "EN",
+    inputPlaceholder: "اكتب رسالتك هنا...",
+    send: "إرسال",
+    typing: "رملة تكتب...",
+    welcomeTitle: "مرحبًا بك في رمال 👋",
+    welcomeBody:
+      "أنا رملة، مساعدتك الذكية لكل ما يخص رمال. اسألي عن مساحات العمل، الحاضنة، المسرّعة أو الدورات.",
+    quickReplies: [
+      "ما هي مساحات العمل المتوفرة؟",
+      "أبغى مساحة عمل",
+      "أخبرني عن برنامج الحاضنة",
+      "ما هي الدورات المتاحة؟",
+    ],
+    citationPrefix: "المصدر:",
+    confidenceLabel: "مستوى الثقة",
+    lowConfidenceNotice: "الإجابة أعلاه غير مؤكدة بالكامل، سيتم تحويلك لأحد فريقنا للتأكد.",
+    noAnswerNotice: "لا أملك إجابة موثوقة لهذا السؤال حاليًا.",
+    transferButton: "تحويل إلى فريق رمال",
+    transferConfirmed: "تم إرسال طلبك، سيتواصل معك أحد أعضاء فريق رمال قريبًا.",
+    promptInjectionRefusal:
+      "لا يمكنني تجاهل تعليماتي أو تغيير طريقة عملي، لكن يسعدني مساعدتك في أي استفسار عن خدمات رمال.",
+    piiHint: "تجنّب مشاركة بيانات حساسة هنا (هوية، آيبان، بريد إلكتروني كامل).",
+    rateLimitNotice: "الرجاء الانتظار قليلًا قبل إرسال رسالة جديدة.",
+    errorTitle: "تعذّر إرسال رسالتك",
+    errorBody: "حدث خطأ أثناء الاتصال، حاول مرة أخرى.",
+    retry: "إعادة المحاولة",
+    qualification: {
+      intro: "يسعدني مساعدتك في اختيار الأنسب لك، فقط أجب على بعض الأسئلة السريعة:",
+      questions: {
+        budget: "ما هي ميزانيتك الشهرية التقريبية؟",
+        teamSize: "كم عدد أفراد فريقك؟",
+        usageType: "ما هو نوع الاستخدام الأساسي؟",
+      },
+    },
+    recommendation: {
+      title: "الترشيح المناسب لك",
+      ctaButton: "أريد هذا الخيار",
+    },
+    leadForm: {
+      title: "أكمل بياناتك وسنتواصل معك",
+      nameLabel: "الاسم الكامل",
+      namePlaceholder: "اكتب اسمك",
+      phoneLabel: "رقم الجوال",
+      phonePlaceholder: "05xxxxxxxx",
+      privacyNote: "بياناتك محمية ولن تُستخدم إلا للتواصل معك",
+      submit: "إرسال البيانات",
+      submitting: "جارٍ الإرسال...",
+      nameError: "الرجاء إدخال الاسم الكامل",
+      phoneError: "الرجاء إدخال رقم جوال صحيح",
+      successTitle: "تم استلام بياناتك بنجاح 🎉",
+      successBody: "سيتواصل معك فريق رمال خلال وقت قصير.",
+    },
+    footerHint: "الردود تجريبية بالكامل ولأغراض العرض فقط",
+  },
+  en: {
+    brandName: "Ramla",
+    brandTagline: "Rimal's smart assistant",
+    bubbleAria: "Open Ramla chat",
+    closeAria: "Close chat",
+    newConversation: "New conversation",
+    langToggle: "ع",
+    inputPlaceholder: "Type your message...",
+    send: "Send",
+    typing: "Ramla is typing...",
+    welcomeTitle: "Welcome to Rimal 👋",
+    welcomeBody:
+      "I'm Ramla, your smart assistant for everything Rimal. Ask about workspaces, the incubator, the accelerator, or courses.",
+    quickReplies: [
+      "What workspaces are available?",
+      "I want a workspace",
+      "Tell me about the incubator program",
+      "What courses are available?",
+    ],
+    citationPrefix: "Source:",
+    confidenceLabel: "Confidence",
+    lowConfidenceNotice:
+      "The answer above isn't fully certain, so you'll be transferred to our team to confirm.",
+    noAnswerNotice: "I don't have a reliable answer for this right now.",
+    transferButton: "Transfer to Rimal team",
+    transferConfirmed: "Your request has been sent — a Rimal team member will reach out soon.",
+    promptInjectionRefusal:
+      "I can't ignore my instructions or change how I work, but I'd be happy to help with any question about Rimal's services.",
+    piiHint: "Avoid sharing sensitive data here (ID number, IBAN, full email).",
+    rateLimitNotice: "Please wait a moment before sending another message.",
+    errorTitle: "Couldn't send your message",
+    errorBody: "Something went wrong while connecting. Please try again.",
+    retry: "Retry",
+    qualification: {
+      intro: "Happy to help you find the best fit — just answer a few quick questions:",
+      questions: {
+        budget: "What's your approximate monthly budget?",
+        teamSize: "How many people are on your team?",
+        usageType: "What's the main type of use?",
+      },
+    },
+    recommendation: {
+      title: "Your recommended fit",
+      ctaButton: "I want this option",
+    },
+    leadForm: {
+      title: "Complete your details and we'll reach out",
+      nameLabel: "Full name",
+      namePlaceholder: "Enter your name",
+      phoneLabel: "Phone number",
+      phonePlaceholder: "05xxxxxxxx",
+      privacyNote: "Your data is protected and only used to contact you",
+      submit: "Submit details",
+      submitting: "Submitting...",
+      nameError: "Please enter your full name",
+      phoneError: "Please enter a valid phone number",
+      successTitle: "Your details were received 🎉",
+      successBody: "The Rimal team will reach out to you shortly.",
+    },
+    footerHint: "Replies are fully simulated for demo purposes only",
+  },
+} as const;
+
+export function t(lang: Language) {
+  return translations[lang];
+}
