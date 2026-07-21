@@ -5,7 +5,10 @@
       "Skill(run)",
       "Skill(run:*)",
       "Bash(lsof -ti:3000 -sTCP:LISTEN)",
-      "Bash(xargs -r kill)"
+      "Bash(xargs -r kill)",
+      "Bash(node gen-seed.mjs)",
+      "Bash(export SUPABASE_DB_URL='postgresql://postgres.hlgoldnchrswsyaydtoh:Chat_Bot.123@aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres')",
+      "Bash(node run-migration.mjs \"c:\\\\Users\\\\Abeer\\\\OneDrive\\\\Desktop\\\\Chatbot\\\\supabase\\\\migrations\\\\0001_init.sql\")"
     ]
   }
 }

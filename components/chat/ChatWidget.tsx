@@ -9,7 +9,7 @@ import type {
   QualificationAnswer,
 } from "@/lib/types/chat.types";
 import { t } from "@/lib/i18n/translations";
-import { mockChatAdapter } from "@/lib/adapters/MockChatAdapter";
+import { supabaseChatAdapter as mockChatAdapter } from "@/lib/adapters/SupabaseChatAdapter";
 import ChatBubble from "@/components/chat/ChatBubble";
 import MessageBubble from "@/components/chat/MessageBubble";
 import TypingIndicator from "@/components/chat/TypingIndicator";
