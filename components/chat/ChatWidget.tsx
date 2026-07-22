@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { RotateCcw, Send, X } from "lucide-react";
+import { Paperclip, RotateCcw, Send, Sparkles, X } from "lucide-react";
 import type {
   ChatMessage,
   Language,
@@ -10,7 +10,9 @@ import type {
 } from "@/lib/types/chat.types";
 import { t } from "@/lib/i18n/translations";
 import { supabaseChatAdapter as mockChatAdapter } from "@/lib/adapters/SupabaseChatAdapter";
-import ChatBubble from "@/components/chat/ChatBubble";
+import RamlaMascot from "@/components/chat/RamlaMascot";
+import ChatSidebar from "@/components/chat/ChatSidebar";
+import SandBurst from "@/components/chat/SandBurst";
 import MessageBubble from "@/components/chat/MessageBubble";
 import TypingIndicator from "@/components/chat/TypingIndicator";
 import QualificationStep from "@/components/chat/QualificationStep";
@@ -67,12 +69,17 @@ export default function ChatWidget() {
 
   const dict = t(lang);
   const dir = lang === "ar" ? "rtl" : "ltr";
-  const sideClass = lang === "ar" ? "right-4 sm:right-6" : "left-4 sm:left-6";
   const fontClass = lang === "en" ? "font-en" : "font-sans";
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ block: "end" });
   }, [messages.length, assistantTyping]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.parent !== window) {
+      window.parent.postMessage({ source: "ramla-chat-widget", isOpen }, "*");
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     return () => {
@@ -273,22 +280,73 @@ export default function ChatWidget() {
 
   return (
     <div dir={dir} className={fontClass}>
-      <div className={`fixed z-50 bottom-4 sm:bottom-6 ${sideClass}`}>
-        <ChatBubble isOpen={isOpen} onClick={() => setIsOpen((o) => !o)} lang={lang} />
-      </div>
+      <RamlaMascot
+        isOpen={isOpen}
+        onClick={() => setIsOpen((o) => !o)}
+        ariaLabel={isOpen ? dict.closeAria : dict.bubbleAria}
+      />
 
       <div
-        className={`fixed z-50 bottom-20 sm:bottom-24 ${sideClass} flex h-[70vh] max-h-[600px] w-[92vw] max-w-sm flex-col overflow-hidden rounded-2xl bg-white shadow-2xl transition-all duration-300 ${
-          isOpen
-            ? "translate-y-0 scale-100 opacity-100"
-            : "pointer-events-none translate-y-4 scale-95 opacity-0"
+        className={`fixed inset-0 z-50 flex items-center justify-center transition-colors duration-300 sm:p-6 ${
+          isOpen ? "bg-black/40" : "pointer-events-none bg-black/0"
         }`}
         role="dialog"
         aria-hidden={!isOpen}
         aria-label={dict.brandName}
       >
-        <div className="flex items-center justify-between gap-2 bg-rimal-dark px-3 py-3">
-          <div className="flex items-center gap-2">
+        <div
+          className={`relative flex h-[100dvh] w-full flex-col overflow-hidden bg-white shadow-2xl transition-all duration-300 sm:h-[85vh] sm:max-h-[820px] sm:w-[90vw] sm:max-w-5xl sm:rounded-3xl ${
+            isOpen
+              ? "translate-y-0 scale-100 opacity-100"
+              : "pointer-events-none translate-y-4 scale-95 opacity-0"
+          }`}
+        >
+          <SandBurst active={isOpen} />
+
+          {/* شريط أدوات علوي رفيع: إغلاق / محادثة جديدة / تبديل اللغة */}
+          <div className="flex items-center justify-between gap-2 border-b border-gray-100 px-3 py-2">
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-semibold text-gray-500 transition-colors hover:bg-gray-100 hover:text-rimal-dark-text"
+            >
+              <X className="h-3.5 w-3.5" />
+              {dict.closeAria}
+            </button>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={handleNewConversation}
+                title={dict.newConversation}
+                className="flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-semibold text-gray-500 transition-colors hover:bg-gray-100 hover:text-rimal-dark-text"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">{dict.newConversation}</span>
+              </button>
+              <LanguageToggle lang={lang} onToggle={handleLanguageToggle} />
+            </div>
+          </div>
+
+          {/* هيدر كبير للترحيب — ديسكتوب فقط */}
+          <div className="hidden shrink-0 items-center justify-between border-b border-gray-100 bg-gradient-to-l from-rimal-secondary/5 via-white to-rimal-primary/5 px-6 py-3 sm:flex">
+            <img
+              src="/brand/rimal-logo.jpg"
+              alt={dict.companyName}
+              className="h-9 w-auto object-contain mix-blend-multiply"
+            />
+            <div className="flex items-center gap-2">
+              <p className="text-xs text-gray-500">{dict.heroWelcome}</p>
+              <img
+                src="/brand/rimal-logo.jpg"
+                alt={dict.companyName}
+                className="h-6 w-auto object-contain mix-blend-multiply"
+              />
+              <p className="text-xs text-gray-500">{dict.heroTagline}</p>
+            </div>
+          </div>
+
+          {/* هيدر مضغوط — جوال فقط */}
+          <div className="flex shrink-0 items-center gap-2 bg-rimal-dark px-3 py-3 sm:hidden">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-rimal-primary text-sm font-bold text-white">
               {lang === "ar" ? "ر" : "R"}
             </div>
@@ -297,153 +355,150 @@ export default function ChatWidget() {
               <span className="text-[11px] text-white/60">{dict.brandTagline}</span>
             </div>
           </div>
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={handleNewConversation}
-              title={dict.newConversation}
-              className="flex items-center gap-1 rounded-lg border border-white/20 px-2 py-1.5 text-[10px] font-semibold text-white transition-colors hover:bg-white/10"
-            >
-              <RotateCcw className="h-3.5 w-3.5" />
-              <span>{dict.newConversation}</span>
-            </button>
-            <LanguageToggle lang={lang} onToggle={handleLanguageToggle} />
-            <button
-              type="button"
-              onClick={() => setIsOpen(false)}
-              aria-label={dict.closeAria}
-              className="rounded-lg p-1.5 text-white/80 transition-colors hover:bg-white/10 hover:text-white"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
 
-        <div className="flex-1 space-y-3 overflow-y-auto bg-white px-3 py-4">
-          {messages.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center gap-4 px-2 text-center">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-rimal-badge text-2xl">
-                👋
+          {/* الجسم: قائمة جانبية (ديسكتوب) + عمود المحادثة */}
+          <div className="flex min-h-0 flex-1">
+            <div className="flex min-h-0 flex-1 flex-col">
+              <div className="flex-1 space-y-3 overflow-y-auto bg-white px-3 py-4 sm:px-6">
+                {messages.length === 0 ? (
+                  <div className="flex h-full flex-col items-center justify-center gap-4 px-2 text-center">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-rimal-badge text-2xl">
+                      👋
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <h3 className="text-sm font-bold text-rimal-dark-text">{dict.welcomeTitle}</h3>
+                      <p className="text-xs leading-relaxed text-gray-500">{dict.welcomeBody}</p>
+                    </div>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {dict.quickReplies.map((quickReply) => (
+                        <button
+                          key={quickReply}
+                          type="button"
+                          onClick={() => void handleSend(quickReply)}
+                          className="flex items-center gap-1.5 rounded-full border border-rimal-secondary/30 bg-rimal-secondary/5 px-3 py-1.5 text-xs font-medium text-rimal-secondary transition-colors hover:bg-rimal-secondary hover:text-white"
+                        >
+                          <Sparkles className="h-3 w-3" />
+                          {quickReply}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  messages.map((message) => {
+                    if (message.kind === "qualification") {
+                      const question = mockChatAdapter
+                        .getQualificationQuestions(lang)
+                        .find((q) => q.id === message.qualificationQuestionId);
+                      if (!question) return null;
+                      return (
+                        <div key={message.id} dir="ltr" className="flex w-full items-end justify-start gap-2">
+                          <QualificationStep
+                            question={question}
+                            lang={lang}
+                            selectedOptionId={
+                              qualificationAnswers.find((a) => a.questionId === question.id)?.optionId
+                            }
+                            onSelect={(optionId) => handleQualificationSelect(question.id, optionId)}
+                          />
+                        </div>
+                      );
+                    }
+                    if (message.kind === "recommendation" && message.recommendation) {
+                      return (
+                        <div key={message.id} dir="ltr" className="flex w-full items-end justify-start gap-2">
+                          <RecommendationCard
+                            recommendation={message.recommendation}
+                            lang={lang}
+                            onCta={handleRecommendationCta}
+                            ctaDisabled={leadFormShown}
+                          />
+                        </div>
+                      );
+                    }
+                    if (message.kind === "leadForm") {
+                      return (
+                        <div key={message.id} dir="ltr" className="flex w-full items-end justify-start gap-2">
+                          <LeadForm
+                            lang={lang}
+                            onSubmit={handleLeadSubmit}
+                            submitting={leadSubmitting}
+                            submitted={leadSubmitted}
+                          />
+                        </div>
+                      );
+                    }
+                    return (
+                      <MessageBubble
+                        key={message.id}
+                        message={message}
+                        lang={lang}
+                        onTransfer={handleTransfer}
+                        onRetry={handleRetry}
+                        onTick={scrollToBottom}
+                      />
+                    );
+                  })
+                )}
+                {assistantTyping && <TypingIndicator lang={lang} />}
+                <div ref={bottomRef} />
               </div>
-              <div className="flex flex-col gap-1">
-                <h3 className="text-sm font-bold text-rimal-dark-text">{dict.welcomeTitle}</h3>
-                <p className="text-xs leading-relaxed text-gray-500">{dict.welcomeBody}</p>
-              </div>
-              <div className="flex flex-wrap justify-center gap-2">
-                {dict.quickReplies.map((quickReply) => (
+
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  void handleSend();
+                }}
+                className="flex shrink-0 flex-col gap-1.5 border-t border-gray-200 bg-white px-3 py-3 sm:px-6"
+              >
+                {rateLimited && (
+                  <span className="text-[11px] font-medium text-red-600">{dict.rateLimitNotice}</span>
+                )}
+                {piiHint && !rateLimited && (
+                  <span className="text-[11px] font-medium text-amber-600">{dict.piiHint}</span>
+                )}
+                <div className="flex items-center gap-2">
+                  <input
+                    id="ramla-chat-input"
+                    value={inputValue}
+                    onChange={(e) => {
+                      setInputValue(e.target.value);
+                      setPiiHint(containsPII(e.target.value));
+                    }}
+                    placeholder={
+                      flowStage === "qualifying"
+                        ? lang === "ar"
+                          ? "الرجاء اختيار أحد الخيارات أعلاه"
+                          : "Please select an option above"
+                        : dict.inputPlaceholder
+                    }
+                    disabled={inputDisabled}
+                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm text-rimal-dark-text outline-none transition-colors focus:border-rimal-secondary disabled:bg-gray-50"
+                  />
+                  <Paperclip className="hidden h-4 w-4 shrink-0 text-gray-400 sm:block" />
                   <button
-                    key={quickReply}
-                    type="button"
-                    onClick={() => void handleSend(quickReply)}
-                    className="rounded-full border border-rimal-secondary/30 bg-rimal-secondary/5 px-3 py-1.5 text-xs font-medium text-rimal-secondary transition-colors hover:bg-rimal-secondary hover:text-white"
+                    type="submit"
+                    disabled={sendDisabled}
+                    aria-label={dict.send}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-rimal-primary text-white transition-colors hover:bg-rimal-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {quickReply}
+                    <Send className={`h-4 w-4 ${lang === "ar" ? "rotate-180" : ""}`} />
                   </button>
-                ))}
-              </div>
+                </div>
+                <span className="text-center text-[10px] text-gray-400">{dict.footerHint}</span>
+                <span className="hidden text-center text-[10px] text-gray-300 sm:block">
+                  {dict.footerCopyright}
+                </span>
+              </form>
             </div>
-          ) : (
-            messages.map((message) => {
-              if (message.kind === "qualification") {
-                const question = mockChatAdapter
-                  .getQualificationQuestions(lang)
-                  .find((q) => q.id === message.qualificationQuestionId);
-                if (!question) return null;
-                return (
-                  <div key={message.id} dir="ltr" className="flex w-full items-end justify-start gap-2">
-                    <QualificationStep
-                      question={question}
-                      lang={lang}
-                      selectedOptionId={
-                        qualificationAnswers.find((a) => a.questionId === question.id)?.optionId
-                      }
-                      onSelect={(optionId) => handleQualificationSelect(question.id, optionId)}
-                    />
-                  </div>
-                );
-              }
-              if (message.kind === "recommendation" && message.recommendation) {
-                return (
-                  <div key={message.id} dir="ltr" className="flex w-full items-end justify-start gap-2">
-                    <RecommendationCard
-                      recommendation={message.recommendation}
-                      lang={lang}
-                      onCta={handleRecommendationCta}
-                      ctaDisabled={leadFormShown}
-                    />
-                  </div>
-                );
-              }
-              if (message.kind === "leadForm") {
-                return (
-                  <div key={message.id} dir="ltr" className="flex w-full items-end justify-start gap-2">
-                    <LeadForm
-                      lang={lang}
-                      onSubmit={handleLeadSubmit}
-                      submitting={leadSubmitting}
-                      submitted={leadSubmitted}
-                    />
-                  </div>
-                );
-              }
-              return (
-                <MessageBubble
-                  key={message.id}
-                  message={message}
-                  lang={lang}
-                  onTransfer={handleTransfer}
-                  onRetry={handleRetry}
-                  onTick={scrollToBottom}
-                />
-              );
-            })
-          )}
-          {assistantTyping && <TypingIndicator lang={lang} />}
-          <div ref={bottomRef} />
-        </div>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            void handleSend();
-          }}
-          className="flex flex-col gap-1.5 border-t border-gray-200 bg-white px-3 py-3"
-        >
-          {rateLimited && (
-            <span className="text-[11px] font-medium text-red-600">{dict.rateLimitNotice}</span>
-          )}
-          {piiHint && !rateLimited && (
-            <span className="text-[11px] font-medium text-amber-600">{dict.piiHint}</span>
-          )}
-          <div className="flex items-center gap-2">
-            <input
-              id="ramla-chat-input"
-              value={inputValue}
-              onChange={(e) => {
-                setInputValue(e.target.value);
-                setPiiHint(containsPII(e.target.value));
-              }}
-              placeholder={
-                flowStage === "qualifying"
-                  ? lang === "ar"
-                    ? "الرجاء اختيار أحد الخيارات أعلاه"
-                    : "Please select an option above"
-                  : dict.inputPlaceholder
-              }
-              disabled={inputDisabled}
-              className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm text-rimal-dark-text outline-none transition-colors focus:border-rimal-secondary disabled:bg-gray-50"
+            <ChatSidebar
+              lang={lang}
+              isOpen={isOpen}
+              onNavClick={(query) => void handleSend(query)}
+              onNewConversation={handleNewConversation}
             />
-            <button
-              type="submit"
-              disabled={sendDisabled}
-              aria-label={dict.send}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-rimal-primary text-white transition-colors hover:bg-rimal-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <Send className={`h-4 w-4 ${lang === "ar" ? "rotate-180" : ""}`} />
-            </button>
           </div>
-          <span className="text-center text-[10px] text-gray-400">{dict.footerHint}</span>
-        </form>
+        </div>
       </div>
     </div>
   );

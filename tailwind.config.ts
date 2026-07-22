@@ -34,8 +34,8 @@ const config: Config = {
           "linear-gradient(135deg, rgba(92,63,120,0.6) 0%, rgba(0,0,0,0) 50%, rgba(138,108,168,0.3) 100%)",
       },
       fontFamily: {
-        sans: ["var(--font-tajawal)", "Tajawal", "IBM Plex Sans Arabic", "sans-serif"],
-        en: ["var(--font-inter)", "Inter", "ui-sans-serif", "sans-serif"],
+        sans: ["var(--font-ge-ss-two)", "sans-serif"],
+        en: ["var(--font-ge-ss-two)", "sans-serif"],
       },
       borderRadius: {
         xl: "0.875rem",

@@ -16,6 +16,27 @@ interface MessageBubbleProps {
 
 const TYPE_INTERVAL_MS = 24;
 
+function formatTime(timestamp: number, lang: Language) {
+  return new Date(timestamp).toLocaleTimeString(lang === "ar" ? "ar-SA" : "en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function AssistantAvatar() {
+  return (
+    <div
+      className="mb-1 h-7 w-7 shrink-0 rounded-full bg-gray-100 shadow-sm"
+      style={{
+        backgroundImage: "url(/mascot/ramla-sprites.png), radial-gradient(circle, #f3f4f6, #f3f4f6)",
+        backgroundSize: "300% 200%, cover",
+        backgroundPosition: "50% 0%, center",
+        backgroundRepeat: "no-repeat, no-repeat",
+      }}
+    />
+  );
+}
+
 export default function MessageBubble({
   message,
   lang,
@@ -72,6 +93,7 @@ export default function MessageBubble({
   if (message.isError) {
     return (
       <div dir="ltr" className="flex w-full items-start justify-start gap-2">
+        <AssistantAvatar />
         <div
           dir={lang === "ar" ? "rtl" : "ltr"}
           className="flex max-w-[85%] flex-col gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-red-700"
@@ -96,12 +118,14 @@ export default function MessageBubble({
 
   return (
     <div dir="ltr" className={`flex w-full items-end gap-2 ${isUser ? "justify-end" : "justify-start"}`}>
+      {!isUser && <AssistantAvatar />}
+      <div className={`flex max-w-[85%] flex-col gap-1 ${isUser ? "items-end" : "items-start"}`}>
       <div
         dir={lang === "ar" ? "rtl" : "ltr"}
         onClick={skipTyping}
-        className={`flex max-w-[85%] flex-col gap-2 rounded-2xl px-4 py-3 shadow-sm ${
+        className={`flex w-full flex-col gap-2 rounded-2xl px-4 py-3 shadow-sm ${
           isUser
-            ? "bg-rimal-secondary/10 text-rimal-dark-text"
+            ? "bg-rimal-secondary text-white"
             : "bg-gray-100 text-rimal-dark-text"
         } ${isTypingOut ? "cursor-pointer" : ""}`}
         title={isTypingOut ? (isEn ? "Click to skip typing" : "اضغط لتخطي الكتابة") : undefined}
@@ -150,6 +174,8 @@ export default function MessageBubble({
             </button>
           </div>
         )}
+      </div>
+      <span className="px-1 text-[10px] text-gray-400">{formatTime(message.timestamp, lang)}</span>
       </div>
       {isUser && (
         <div className="mb-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-rimal-secondary/15 text-rimal-secondary">

@@ -1,17 +1,11 @@
 import type { Metadata } from "next";
-import { Tajawal, Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const tajawal = Tajawal({
-  subsets: ["arabic", "latin"],
-  weight: ["400", "500", "700", "900"],
-  variable: "--font-tajawal",
-  display: "swap",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
+const geSSTwo = localFont({
+  src: "./fonts/GE-SS-Two-Light.otf",
+  weight: "300",
+  variable: "--font-ge-ss-two",
   display: "swap",
 });
 
@@ -22,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ar" dir="rtl" className={`${tajawal.variable} ${inter.variable}`}>
+    <html lang="ar" dir="rtl" className={geSSTwo.variable}>
       <body className="font-sans">{children}</body>
     </html>
   );
